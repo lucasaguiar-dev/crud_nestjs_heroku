@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
-const SECRETMONGODB = process.env.SECRETMONGODB;
 @Module({
-  imports: [MongooseModule.forRoot(SECRETMONGODB), UsersModule],
+  imports: [
+    ConfigModule.forRoot(), // Adiciona a configuração do módulo de configuração
+    MongooseModule.forRootAsync({
+      useFactory: async () => ({
+        uri: process.env.SECRETMONGODB, // Use a variável de ambiente aqui
+      }),
+    }),
+    UsersModule,
+  ],
   controllers: [],
   providers: [],
 })
